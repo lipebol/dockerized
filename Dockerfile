@@ -7,7 +7,7 @@ gpg --dearmor -o /usr/share/keyrings/r-project.gpg && \
 echo 'deb [signed-by=/usr/share/keyrings/r-project.gpg] https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/' | \ 
 tee -a /etc/apt/sources.list.d/r-project.list
 RUN apt update && apt install --no-install-recommends nano python3-pip r-base r-cran-dplyr r-cran-httr \ 
-r-cran-jsonlite r-cran-reticulate r-cran-magrittr r-cran-dotenv -y && pip install 'apache-airflow==2.9.0' \
+r-cran-jsonlite r-cran-magrittr r-cran-dotenv -y && pip install python-dotenv pysmb requests 'apache-airflow==2.9.0' \
 --constraint 'https://raw.githubusercontent.com/apache/airflow/constraints-2.9.0/constraints-3.10.txt'
 RUN mkdir /airflow && export AIRFLOW_HOME=/airflow
 RUN airflow db init
