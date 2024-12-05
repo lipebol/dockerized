@@ -1,3 +1,8 @@
+### Useful Links
+https://airflow.apache.org/docs/apache-airflow/stable/administration-and-deployment/production-deployment.html
+https://airflow.apache.org/docs/apache-airflow/stable/howto/set-up-database.html
+https://medium.com/plumbersofdatascience/from-sqlite-to-postgresql-a-lighthearted-guide-to-upgrading-your-airflow-database-7b9c8de961b5
+
 ### in Postgres Database
 CREATE DATABASE airflow_db;
 CREATE USER airflow_user WITH PASSWORD 'airflow_pass';
