@@ -1,0 +1,114 @@
+services:
+  postgresql:
+    image: postgres
+    container_name: postgresql
+    restart: always
+    environment:
+      POSTGRES_USER: lipebol
+      POSTGRES_PASSWORD: 72AQ9ethkDm155uXG8Ey9I9COcxO
+      POSTGRES_DB: doca
+    expose:
+      - "5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - dockerized-network
+
+  mongodb:
+    image: mongodb/mongodb-community-server
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lipebol
+      MONGO_INITDB_ROOT_PASSWORD: h6XFtU69EcbETLhP1jGRa2gEJ7 
+    expose:
+      - "27017"
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - dockerized-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: lipebol@admin.com
+      PGADMIN_DEFAULT_PASSWORD: PDdtlJY57bYDPuAJ2mlbJm0HfO56RR
+    ports:
+      - "5050:80"
+    volumes:
+      - ./pgadmin4:/pgadmin4
+    depends_on:
+      - postgresql
+    networks:
+      - dockerized-network
+  
+  airflow-with-r:
+    build:
+      context: ./airflow-with-r
+      dockerfile: Dockerfile
+    image: airflow-with-r
+    container_name: airflow-with-r
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - /srv/study/airflow/dags:/root/airflow/dags
+    depends_on:
+      - postgresql
+    networks:
+      - dockerized-network
+  
+  rdesktop:
+    image: lscr.io/linuxserver/rdesktop:ubuntu-xfce
+    container_name: rdesktop
+    restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined 
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+    ports:
+      - 3389:3389
+    volumes:
+#     --> Docker Socket on the system, if you want to use Docker in the container
+#      - /var/run/docker.sock:/var/run/docker.sock
+      - rdesktop-data:/config
+    depends_on:
+      - mongodb
+    networks:
+      - dockerized-network
+    devices:
+      - /dev/dri:/dev/dri
+    shm_size: "1gb"
+
+  rstudio:
+    image: rocker/rstudio
+    container_name: rstudio
+    restart: always
+    environment:
+      PASSWORD: x5J2x7E5tEb95MBpPSdAepNDBaTves
+    ports:
+      - "8888:8787"
+    volumes:
+      - /srv/study/R:/R
+    networks:
+      - dockerized-network
+
+networks:
+  dockerized-network:
+    external: true
+    name: dockerized-network
+
+volumes:
+  pg-data:
+    external: true
+    name: pg-data
+  mongodb-data:
+    external: true
+    name: mongodb-data
+  rdesktop-data:
+    external: true
+    name: rdesktop-data
