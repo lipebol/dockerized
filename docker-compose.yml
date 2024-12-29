@@ -1,3 +1,5 @@
+### Never send your "passwords" in Production ###
+
 services:
   postgresql:
     image: postgres
