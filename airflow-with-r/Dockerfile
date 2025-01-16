@@ -7,8 +7,9 @@ gpg --dearmor -o /usr/share/keyrings/r-project.gpg && \
 echo 'deb [signed-by=/usr/share/keyrings/r-project.gpg] https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/' | \ 
 tee -a /etc/apt/sources.list.d/r-project.list
 RUN apt update && apt install --no-install-recommends nano python3-pip python3-venv \ 
-r-base r-cran-dplyr r-cran-magrittr -y 
-RUN pip install python-dotenv pysmb psycopg2-binary pymongo requests pyarrow pandas duckdb \ 
+r-base r-cran-dplyr r-cran-magrittr r-cran-lubridate -y 
+RUN pip install python-dotenv pysmb psycopg2-binary pymongo requests pyarrow \ 
+pandas duckdb adbc_driver_manager adbc_driver_postgresql apache-airflow-providers-postgres \ 
 'apache-airflow==2.10.3' \
 --constraint 'https://raw.githubusercontent.com/apache/airflow/constraints-2.10.3/constraints-3.10.txt'
 RUN airflow db init
