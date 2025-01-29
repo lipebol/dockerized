@@ -1,3 +1,5 @@
+### Never send your "passwords" in Production ###
+
 ### Useful Links
 https://airflow.apache.org/docs/apache-airflow/stable/administration-and-deployment/production-deployment.html
 https://airflow.apache.org/docs/apache-airflow/stable/howto/set-up-database.html
