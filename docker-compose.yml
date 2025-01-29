@@ -2,115 +2,169 @@
 
 services:
   postgresql:
-    image: postgres
+    image: ${POSTGRES_IMAGE}
     container_name: postgresql
-    restart: always
+    env_file: .env
+    restart: ${RESTART_MODE_1}
     environment:
-      POSTGRES_USER: lipebol
-      POSTGRES_PASSWORD: 72AQ9ethkDm155uXG8Ey9I9COcxO
-      POSTGRES_DB: doca
+      POSTGRES_USER: ${DEFAULT_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     expose:
-      - "5432"
+      - ${POSTGRES_PORT}
     volumes:
-      - pg-data:/var/lib/postgresql/data
+      - ${POSTGRES_SYNC_VOLUME}
     networks:
-      - dockerized-network
+      - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 4096M
+    memswap_limit: 8192M
 
   mongodb:
-    image: mongodb/mongodb-community-server
+    image: ${MONGODB_IMAGE}
     container_name: mongodb
-    restart: always
+    env_file: .env
+    restart: ${RESTART_MODE_1}
     environment:
-      MONGO_INITDB_ROOT_USERNAME: lipebol
-      MONGO_INITDB_ROOT_PASSWORD: h6XFtU69EcbETLhP1jGRa2gEJ7 
+      MONGO_INITDB_ROOT_USERNAME: ${DEFAULT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD} 
     expose:
-      - "27017"
+      - ${MONGODB_PORT}
     volumes:
-      - mongodb-data:/data/db
+      - ${MONGODB_SYNC_VOLUME}
     networks:
-      - dockerized-network
+      - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 4096M
+    memswap_limit: 8192M
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: lipebol@admin.com
-      PGADMIN_DEFAULT_PASSWORD: PDdtlJY57bYDPuAJ2mlbJm0HfO56RR
-    ports:
-      - "5050:80"
-    volumes:
-      - ./pgadmin4:/pgadmin4
-    depends_on:
-      - postgresql
-    networks:
-      - dockerized-network
-  
-  airflow-with-r:
+  airflow:
     build:
-      context: ./airflow-with-r
+      context: ${AIRFLOW_PATH}
       dockerfile: Dockerfile
     image: airflow-with-r
-    container_name: airflow-with-r
-    restart: always
+    container_name: airflow
+    env_file: .env
+    restart: ${RESTART_MODE_1}
     ports:
-      - "8080:8080"
+      - ${AIRFLOW_PORT}
     volumes:
-      - /srv/study/airflow/dags:/root/airflow/dags
+      - ${AIRFLOW_SYNC_VOLUME}
     depends_on:
+      - mongodb
       - postgresql
     networks:
-      - dockerized-network
+      - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 6144M
+    memswap_limit: 12288M
   
   rdesktop:
-    image: lscr.io/linuxserver/rdesktop:ubuntu-xfce
+    image: ${RDESKTOP_IMAGE}
     container_name: rdesktop
-    restart: unless-stopped
+    env_file: .env
+    restart: ${RESTART_MODE_2}
     security_opt:
-      - seccomp:unconfined 
+      - ${RDESKTOP_SEC} 
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Sao_Paulo
     ports:
-      - 3389:3389
+      - ${RDESKTOP_PORT}
     volumes:
-#     --> Docker Socket on the system, if you want to use Docker in the container
-#      - /var/run/docker.sock:/var/run/docker.sock
-      - rdesktop-data:/config
+      - ${RDESKTOP_SYNC_VOLUME_1}
+      - ${RDESKTOP_SYNC_VOLUME_2}
     depends_on:
       - mongodb
+      - postgresql
     networks:
-      - dockerized-network
+      - ${DEFAULT_NETWORK}
     devices:
-      - /dev/dri:/dev/dri
+      - ${RDESKTOP_DEVICE}
     shm_size: "1gb"
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 4096M
 
   rstudio:
-    image: rocker/rstudio
+    image: ${RSTUDIO_IMAGE}
     container_name: rstudio
-    restart: always
+    restart: ${RESTART_MODE_2}
     environment:
-      PASSWORD: x5J2x7E5tEb95MBpPSdAepNDBaTves
+      PASSWORD: ${RSTUDIO_PASSWORD}
     ports:
-      - "8888:8787"
+      - ${RSTUDIO_PORT}
     volumes:
-      - /srv/study/R:/R
+      - ${RSTUDIO_SYNC_VOLUME}
     networks:
-      - dockerized-network
+      - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 6144M
+    memswap_limit: 12288M
+  
+  #webservEx-GraphQL:
+  #  image: ubuntu:24.04
+  #  container_name: webservEx-GraphQL
+  #  restart: always
+  #  expose:
+  #    - "3000"
+  #  volumes:
+  #    - /srv/study/dockerized/webservEx/webservEx_GraphQL:/webservEx_GraphQL
+  #  working_dir: /webservEx_GraphQL
+  #  networks:
+  #    - ${DEFAULT_NETWORK}
+
+  ngiNxy:
+    build:
+      context: ${NGINXY_PATH}
+      dockerfile: Dockerfile
+    image: nginxy
+    container_name: ngiNxy
+    restart: ${RESTART_MODE_1}
+    ports:
+      - ${NGINXY_PORT}
+    volumes:
+      - ${NGINXY_SYNC_VOLUME_1}
+      - ${NGINXY_SYNC_VOLUME_2}
+      - ${NGINXY_SYNC_VOLUME_3}
+    #depends_on:
+    #  - webservEx-GraphQL
+    networks:
+      - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2048M
+    memswap_limit: 4096M
 
 networks:
   dockerized-network:
     external: true
-    name: dockerized-network
+    name: ${DEFAULT_NETWORK}
 
 volumes:
   pg-data:
     external: true
-    name: pg-data
+    name: ${POSTGRES_VOLUME}
   mongodb-data:
     external: true
-    name: mongodb-data
+    name: ${MONGODB_VOLUME}
   rdesktop-data:
     external: true
-    name: rdesktop-data
+    name: ${RDESKTOP_VOLUME}
