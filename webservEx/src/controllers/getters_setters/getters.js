@@ -36,49 +36,35 @@ class GetRequestGraphQL {
     who() {
         try {
             switch (this.resolver) {
-                // com 'argumentos', mas sem 'paginação'
-                case '<QUERY_1>':
-                    set.model('<NAME_MODEL_1>')
-                    set.filter('nome_query')
-                    set.param(this.request)
-                    break
-                case '<QUERY_2>':
-                    set.model('<NAME_MODEL_2>')
-                    break
-                case '<QUERY_3>':
-                    set.model('<NAME_MODEL_3>')
-                    set.filter('param')
+                case 'book':
+                    set.model('M_BOOKS')
+                    set.filter(this.request.name.length > 3 ? this.request : 'abbrev')
                     set.param(this.request)
                     set.fields(this.request.about.context)
                     break
-                case '<QUERY_4>': /// <-- com 'argumentos', mas sem 'paginação'
-                    set.model('<NAME_MODEL_4>')
-                    set.filter(this.request)
-                    set.param(this.request)
-                    set.fields(this.request.about.context)
-                    break
-                case '<QUERY_5>': /// <-- sem 'argumentos', mas com 'paginação'
-                    set.model('<NAME_MODEL_5>')
-                    set.filter('param') /// <-- para ordenação
-                    set.page(this.request.pagina)
-                    set.fields(this.request.about.context)
+                case 'nvi':
+                    set.model('M_NVI_VERSION')
+                    // set.filter(this.request)
+                    // set.param(this.request)
+                    // set.page(this.request.pagina)
+                    set.lookup(['book', 'chapter', 'verse'])
                     break
                 case 'genre': /// <-- com 'argumentos' e 'paginação'
-                    set.model('M_GENRE')
+                    set.model('M_GENRES')
                     set.filter(this.request)
                     set.param(this.request)
                     set.page(this.request.page)
                     set.fields(this.request.about.context)
                     break
                 case 'artist': /// <-- com 'argumentos' e 'paginação'
-                    set.model('M_ARTIST')
+                    set.model('M_ARTISTS')
                     set.filter(this.request)
                     set.param(this.request)
                     set.page(this.request.page)
                     set.fields(this.request.about.context)
                     break
                 case 'track': /// <-- com 'argumentos' e 'paginação'
-                    set.model('M_TRACK')
+                    set.model('M_TRACKS')
                     set.filter(this.request)
                     set.param(this.request)
                     set.page(this.request.pagina)

@@ -4,9 +4,34 @@ const schemas = buildSchema(`
     scalar Date
 
     type Query {
+        book(name: String): [BOOK]
+        nvi: [NVI_VERSION]
+
         genre(name: String, page: Int): [GENRE]
         artist(name: String, page: Int): [ARTIST]
         track(name: String, page: Int): [TRACK]
+    }
+
+    type BOOK {
+        _id: ID
+        name: String
+        abbrev: String
+        location: String
+        position: Int
+        location_position: Int
+    }
+
+    type NUMBER {
+        id: ID
+        number: Int
+    }
+
+    type NVI_VERSION {
+        _id: ID
+        book: BOOK
+        chapter: NUMBER
+        verse: NUMBER
+        text: String
     }
 
     type GENRE {
