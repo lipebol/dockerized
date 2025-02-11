@@ -1,6 +1,9 @@
 // const { Sequelize } = require(process.env.INSTANCE_POSTGRES)
 // const { Op } = require(process.env.ORM)
-const { M_GENRE, M_ARTIST, M_TRACK, M_PLAYLIST } = require(process.env.MODEL_MONGODB)
+const { 
+    M_BOOKS, M_NVI_VERSION, 
+    M_GENRES, M_ARTISTS, M_TRACKS, M_PLAYLISTS 
+} = require(process.env.MODEL_MONGODB)
 // const { _MODEL_1, _MODEL_2, _MODEL_3 } = require(process.env.MODEL_POSTGRESQL)
 
 
