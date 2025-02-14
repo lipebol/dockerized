@@ -44,18 +44,20 @@ services:
           memory: 4096M
     memswap_limit: 8192M
 
-  airflow:
+  air-flowEx:
     build:
-      context: ${AIRFLOW_PATH}
+      context: ${AIRFLOWEX_PATH}
       dockerfile: Dockerfile
-    image: airflow-with-r
-    container_name: airflow
+    command: "./run.sh"
+    image: air-flowex/v1
+    container_name: air-flowEx
     env_file: .env
     restart: ${RESTART_MODE_1}
     ports:
-      - ${AIRFLOW_PORT}
+      - ${AIRFLOWEX_PORT}
     volumes:
-      - ${AIRFLOW_SYNC_VOLUME}
+      - ${AIRFLOWEX_SYNC_VOLUME_1}
+      - ${AIRFLOWEX_SYNC_VOLUME_2}
     depends_on:
       - mongodb
       - postgresql
@@ -98,16 +100,16 @@ services:
           cpus: 2
           memory: 4096M
 
-  rstudio:
-    image: ${RSTUDIO_IMAGE}
-    container_name: rstudio
+  rEx:
+    image: ${REX_IMAGE}
+    container_name: rEx
     restart: ${RESTART_MODE_2}
     environment:
-      PASSWORD: ${RSTUDIO_PASSWORD}
+      PASSWORD: ${REX_PASSWORD}
     ports:
-      - ${RSTUDIO_PORT}
+      - ${REX_PORT}
     volumes:
-      - ${RSTUDIO_SYNC_VOLUME}
+      - ${REX_SYNC_VOLUME}
     networks:
       - ${DEFAULT_NETWORK}
     deploy:
@@ -133,7 +135,7 @@ services:
     build:
       context: ${NGINXY_PATH}
       dockerfile: Dockerfile
-    image: nginxy
+    image: nginxy/v1
     container_name: ngiNxy
     restart: ${RESTART_MODE_1}
     ports:
