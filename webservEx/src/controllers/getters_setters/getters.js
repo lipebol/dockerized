@@ -1,10 +1,10 @@
-const { set } = require(process.env.SETTERS)
+const { set } = require(process.env.SETTERS_PATH)
 
 class GetRequestResponse {
 
     requestREST(request) {
         try {
-            let [name, table, column] = set.url(request.originalUrl)
+            let [version, name, table, column] = set.url(request.originalUrl)
             set.model({ name, table })
             if (request.query && column) {
                 set.filter({ name, column })
