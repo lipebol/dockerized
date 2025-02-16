@@ -5,7 +5,7 @@ services:
     image: ${POSTGRES_IMAGE}
     container_name: postgresql
     env_file: .env
-    restart: ${RESTART_MODE_1}
+    restart: ${DEFAULT_RESTART_MODE}
     environment:
       POSTGRES_USER: ${DEFAULT_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -27,7 +27,7 @@ services:
     image: ${MONGODB_IMAGE}
     container_name: mongodb
     env_file: .env
-    restart: ${RESTART_MODE_1}
+    restart: ${DEFAULT_RESTART_MODE}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DEFAULT_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD} 
@@ -52,7 +52,7 @@ services:
     image: air-flowex/v1
     container_name: air-flowEx
     env_file: .env
-    restart: ${RESTART_MODE_1}
+    restart: ${DEFAULT_RESTART_MODE}
     ports:
       - ${AIRFLOWEX_PORT}
     volumes:
@@ -74,7 +74,7 @@ services:
     image: ${RDESKTOP_IMAGE}
     container_name: rdesktop
     env_file: .env
-    restart: ${RESTART_MODE_2}
+    restart: ${DEFAULT_RESTART_MODE}
     security_opt:
       - ${RDESKTOP_SEC} 
     environment:
@@ -103,7 +103,7 @@ services:
   rEx:
     image: ${REX_IMAGE}
     container_name: rEx
-    restart: ${RESTART_MODE_2}
+    restart: ${DEFAULT_RESTART_MODE}
     environment:
       PASSWORD: ${REX_PASSWORD}
     ports:
@@ -137,7 +137,7 @@ services:
       dockerfile: Dockerfile
     image: nginxy/v1
     container_name: ngiNxy
-    restart: ${RESTART_MODE_1}
+    restart: ${DEFAULT_RESTART_MODE}
     ports:
       - ${NGINXY_PORT}
     volumes:
