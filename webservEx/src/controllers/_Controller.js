@@ -1,9 +1,9 @@
-const service = require(process.env.SERVICE)
-const { HasParams } = require(process.env.HAS_PARAMS)
-const { ThisParams } = require(process.env.THIS_PARAMS)
+const service = require(process.env.SERVICE_PATH)
+const { HasParams } = require(process.env.HAS_PARAMS_PATH)
+const { ThisParams } = require(process.env.THIS_PARAMS_PATH)
 
 /// mexer aqui, acrescentando tratamento de erros do "GraphQL"
-const { get } = require(process.env.GETTERS)
+const { get } = require(process.env.GETTERS_PATH)
 
 
 // enviar erro para algum lugar, e passar uma mensagem padronizada

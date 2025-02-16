@@ -1,4 +1,4 @@
-const { mongoose, mongooseBible, mongooseSpotifEx } = require(process.env.INSTANCE_MONGODB)
+const { mongoose, mongooseBible, mongooseSpotifEx } = require(process.env.INSTANCE_MONGODB_PATH)
 
 
 /// Collection MongoDB in bible: 'books'

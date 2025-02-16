@@ -1,4 +1,4 @@
-const router = require(process.env.SERVER).Router()
+const router = require(process.env.EXPRESS).Router()
 const { createHandler } = require(process.env.GRAPHQL_HTTP)
 const GraphiQL = require(process.env.GRAPHIQL).default
 const { schemas } = require(process.env.GRAPHQL_SCHEMAS)
@@ -10,6 +10,6 @@ router.all(process.env.SLASH, createHandler({
   rootValue: resolvers
 }))
 
-router.get(process.env.GRAPHQL_TOOL, GraphiQL({ endpoint: process.env.API_GRAPHQL }))
+router.get(process.env.GRAPHIQL_ENDPOINT, GraphiQL({ endpoint: process.env.GRAPHQL_ENDPOINT }))
 
 module.exports = router

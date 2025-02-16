@@ -1,4 +1,4 @@
-const { c_ } = require(process.env.CONTROLLER)
+const { c_ } = require(process.env.CONTROLLER_PATH)
 
 const resolvers = {
     async book(args, _, context) {

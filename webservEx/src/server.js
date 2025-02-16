@@ -1,26 +1,20 @@
 require('dotenv').config()
 const cors = require(process.env.CORS)
-const Express = require(process.env.SERVER)
-const graphql = require(process.env.GRAPHQL)
-
+const Express = require(process.env.EXPRESS)
 const Server = Express()
 
 Server.use(cors())
 
-//Server.use(process.env.SLASH, Express.static(
-//    process.env.STATIC, {
-//    index: process.env.INDEX_PAGE,
-//    extensions: [process.env.TYPE_HTML]
-//})
-//)
 
-Server.use(process.env.API_GRAPHQL, graphql)
+Server.use(process.env.GRAPHQL_ENDPOINT, require(process.env.GRAPHQL_PATH))
+
+Server.use(process.env.JOBS_ROUTES_ENDPOINT, require(process.env.JOBS_ROUTES_PATH))
 
 Server.use((req, res) => {
     if (
         (
             req.url.includes(process.env.API) && !(
-                req.url.includes(process.env.DOC) || req.url.includes(process.env.GRAPHQL_TOOL)
+                req.url.includes(process.env.DOC) || req.url.includes(process.env.GRAPHIQL_ENDPOINT)
             )
         )
     ) {
