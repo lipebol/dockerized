@@ -1,10 +1,10 @@
-// const { Sequelize } = require(process.env.INSTANCE_POSTGRES)
-// const { Op } = require(process.env.ORM)
+const { Sequelize } = require(process.env.INSTANCE_POSTGRESQL_PATH)
+const { Op } = require(process.env.ORM)
 const { 
     M_BOOKS, M_NVI_VERSION, 
     M_GENRES, M_ARTISTS, M_TRACKS, M_PLAYLISTS 
-} = require(process.env.MODEL_MONGODB)
-// const { _MODEL_1, _MODEL_2, _MODEL_3 } = require(process.env.MODEL_POSTGRESQL)
+} = require(process.env.MODEL_MONGODB_PATH)
+const { _JOBSWEBSITES, _JOBSKEYWORDS } = require(process.env.MODEL_POSTGRESQL_PATH)
 
 
 class Service {
