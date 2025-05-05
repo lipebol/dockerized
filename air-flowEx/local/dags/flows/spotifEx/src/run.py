@@ -13,11 +13,11 @@ class SpotifEx:
     def __init__(self) -> None:
         self.today = str(datetime.now().date())
         self._metadata = System.dbus()
-        self._File = File(System())
+        self._File = File()
         self._json = self._File.read('JSON_FILE')
         self._trackid = self._File.read('TRACKID') if self._File.exists('TRACKID') else False
 
-
+    @System.exceptions
     def trackFind(self) -> None or dict:
         if self.today not in self._json['spotifEx'].keys():
             self._json['spotifEx'].update({self.today: []})
@@ -26,15 +26,14 @@ class SpotifEx:
                 if self._metadata['trackid'] == item['track']['trackid']:
                     return item
 
-
+    @System.exceptions
     def nextTrack(self) -> None or str:
         if self._metadata['trackid'] != self._trackid:
             return str(self._File.write('TRACKID', self._metadata['trackid']))
 
-
     def run(self):
         if self._metadata:
-            self._Web = Web(System(), self._metadata)
+            self._Web = Web(self._metadata)
             if self.nextTrack():
                 self.find = self.trackFind()
                 if not self.find:
