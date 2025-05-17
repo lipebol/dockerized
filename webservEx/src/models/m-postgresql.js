@@ -8,6 +8,8 @@ const _JOBSWEBSITES = sequelizeConnect.define("_JOBSWEBSITES", {
     name: { type: DataTypes.STRING },
     url: { type: DataTypes.STRING },
     relative_path: { type: DataTypes.JSONB },
+    tag: { type: DataTypes.STRING },
+    tag_identifier: { type: DataTypes.JSONB },
     date_created: { type: DataTypes.STRING },
     time_created: { type: DataTypes.STRING }
 }, {
