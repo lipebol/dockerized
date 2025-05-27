@@ -5,7 +5,7 @@ path.insert(0, abspath(join(dirname(__file__), '..', '..', '..')))
 
 from ast import literal_eval
 from os import getenv
-from utEx.httpEx import HttpEx
+from common.httpEx import HttpEx
 from system import System
 
 
