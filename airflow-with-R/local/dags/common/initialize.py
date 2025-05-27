@@ -10,12 +10,11 @@ class StartingError(Exception):
 class Starting:
 
     load_dotenv()
-    path.append(getenv('UTEX'))
+    path.append(getenv('COMMON'))
     def __init__(self, properties: object) -> None:
         self.__properties = properties
 
     def init(self):
         for requirement in literal_eval(getenv('REQUIREMENTS')):
             if requirement not in dir(self.__properties):
-                print(getenv('NOT_DECLARED') % f'"self.{requirement}"')
-                raise StartingError
+                raise StartingError(getenv('NOT_DECLARED') % f'"self.{requirement}"')
