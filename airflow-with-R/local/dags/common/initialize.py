@@ -4,9 +4,6 @@ from os import getenv
 from sys import path
 
 
-class StartingError(Exception):
-    pass
-
 class Starting:
 
     load_dotenv()
@@ -17,4 +14,15 @@ class Starting:
     def init(self):
         for requirement in literal_eval(getenv('REQUIREMENTS')):
             if requirement not in dir(self.__properties):
-                raise StartingError(getenv('NOT_DECLARED') % f'"self.{requirement}"')
+                raise Exception(getenv('NOT_DECLARED') % f'"self.{requirement}"')
+            
+class add:
+
+    @staticmethod
+    def exception(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as error:
+                raise Exception(f"{error} (👉 @{str(func).split(' ')[1]} 👈)")
+        return wrapper
