@@ -20,7 +20,7 @@ with DAG(
 
     task_2=PythonOperator(
         task_id="Transform...",
-        python_callable=Transform(settings()).data
+        python_callable=Transform(settings()).convert_date_using_pyarrow
     )
 
 
