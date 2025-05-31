@@ -1,15 +1,8 @@
+from common.initialize import add
 from ast import literal_eval
 from dotenv import load_dotenv
 from glob import glob
-from inspect import currentframe
 from os import getenv
-
-
-class settingsError(Exception):
-    """
-    Tratamento de _**Erros**_ e _**Exceções**_.
-    """
-    pass
 
 
 class settings:
@@ -44,10 +37,10 @@ class settings:
         """
         self.path = getenv('CONVERT_DATE_USING_PYARROW_PATH')
         self.file_fields = literal_eval(getenv('CONVERT_DATE_USING_PYARROW_FILE_FIELDS'))
-        self.mainSchema = getenv('CONVERT_DATE_USING_PYARROW_SCHEMA')
+        self.mainSchema = getenv('POSTS_SCHEMA')
         self.fetch = self.resolveName = None
 
-
+    @add.exception
     def csv_files(self):
         """
         Retorna uma lista com o caminho de cada arquivo 
@@ -58,9 +51,5 @@ class settings:
         -------
         **`return`** (_`list`_): caminhos dos arquivos.
         """
-        try:
-            return glob(getenv('CSV_FILES') % self.path)
-        except Exception as error:
-            raise settingsError(
-                f"{error} in: @{currentframe().f_code.co_name}"
-            )
+        return glob(getenv('CSV_FILES') % self.path)
+    
