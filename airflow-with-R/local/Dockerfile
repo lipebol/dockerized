@@ -22,3 +22,4 @@ COPY ./scripts/webserver.sh webserver.sh
 COPY ./scripts/run.sh run.sh
 RUN airflow db init
 RUN chmod +x scheduler.sh webserver.sh run.sh && mkdir dags
+CMD ["./run.sh"]
