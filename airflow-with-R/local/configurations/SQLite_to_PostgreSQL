@@ -7,12 +7,14 @@ GRANT ALL PRIVILEGES ON DATABASE airflow_db TO airflow;
 GRANT ALL ON SCHEMA public TO airflow;
 
 ### in "/root/airflow/airflow.cfg"
-"executor" and "sql_alchemy_conn"
+"sql_alchemy_conn"
 
 ### in "container command line"
 airflow db migrate
-airflow users create --username snoopy --firstname Snoopy --lastname Buddy --role Admin --email snoopy@buddy.regard --password i_miss_you_friend
 airflow connections add postgresql_default --conn-uri 'postgres://airflow:O8Qop2JbmlI8mJpV14iMKgTnbzxlZs@postgresql:5432/dockerized'
 
 ### in "Host"
 docker container restart <container_name>
+
+### "user" and "password"
+'/opt/user/dockerized/airflow/credentials.json'
