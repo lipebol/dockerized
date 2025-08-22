@@ -52,6 +52,14 @@ services:
 
   airflow:
     <<: *common
+    command: |
+      bash -c "
+        airflow api-server --port 8080 &
+        airflow scheduler &
+        airflow dag-processor &
+        airflow triggerer &
+        tail -f /dev/null
+      "
     build:
       context: ./airflow-with-R/local
     image: lipebol/airflow:v1
@@ -59,8 +67,9 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ./airflow-with-R/local/dags:/root/airflow/dags
-      - ./airflow-with-R/local/configurations/airflow.cfg:/root/airflow/airflow.cfg
+      - ./airflow-with-R/local/configurations/airflow.cfg:/opt/user/dockerized/airflow/airflow.cfg
+      - ./airflow-with-R/local/dags:/opt/user/dockerized/airflow/dags
+    working_dir: /opt/user/dockerized/airflow
     deploy:
       resources:
         limits:
@@ -83,6 +92,17 @@ services:
     devices:
       - /dev/dri:/dev/dri
     shm_size: 1gb
+
+  pgadmin4:
+    <<: *common
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: lipebol@domain.com
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN4_PASSWORD}
+      PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
+    ports:
+      - 5000:80
 
   rstudio:
     <<: *common
