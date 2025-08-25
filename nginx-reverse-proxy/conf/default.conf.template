@@ -12,6 +12,12 @@ server {
     location / {
         root   /usr/share/nginx/html;
         index  index.html index.htm;
+
+        ### https://stackoverflow.com/questions/38228393/nginx-remove-html-extension
+        if ($request_uri ~ ^/(.*)\.html(\?|$)) {
+            return 302 /$1;
+        }
+        try_files $uri $uri.html $uri/ =404;
     }
 
     location /api/v1/ {
