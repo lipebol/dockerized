@@ -10,8 +10,9 @@ RUN wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc |
     tee -a /etc/apt/sources.list.d/r-project.list
 RUN apt update && apt install --no-install-recommends nano python3-pip python3-venv \
     r-base r-cran-dplyr r-cran-magrittr r-cran-lubridate r-cran-rjava r-cran-dbi -y 
-RUN pip install flask-appbuilder python-dotenv pysmb psycopg2-binary pymongo requests \
-    pyarrow unidecode pandas duckdb adbc_driver_manager adbc_driver_postgresql \
+RUN pip install --upgrade flask-appbuilder python-dotenv pysmb psycopg2-binary pymongo requests cryptography \
+    google-api-python-client google-auth-httplib2 google-auth-oauthlib \
+    beautifulsoup4 lxml pillow pyarrow unidecode pandas duckdb adbc_driver_manager adbc_driver_postgresql \
     apache-airflow-providers-postgres JayDeBeApi apache-airflow-providers-samba \
     apache-airflow-providers-jdbc \
     'apache-airflow==3.0.4' \
