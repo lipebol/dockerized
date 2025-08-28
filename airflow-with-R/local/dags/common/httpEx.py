@@ -1,6 +1,7 @@
 from common.initialize import add, load
-# from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
 from requests import get
+from time import sleep
 
 
 class httpEx:
@@ -8,25 +9,28 @@ class httpEx:
     @add.exception
     @staticmethod
     def __getdata(func):
-        def wrapper(*args, **kwargs):
-            request = get(
-                kwargs.get('url') if kwargs.get('url') else "".join(args), 
-                params=kwargs.get('params'),
+        def wrapper(**kwargs):
+            r = get(
+                kwargs.get('url'), params=kwargs.get('params'),
                 headers=load.variable('HEADERS', eval=True), timeout=2
             )
-            if request.status_code == 200:
-                kwargs['response'] = request.text if kwargs.get('text') else request.content
-                return func(*args, **kwargs)
+            sleep(5)
+            if r.status_code == 200:
+                if 'scrape' in func.__name__:
+                    kwargs['text'] = True
+                kwargs['response'] = r.text if kwargs.get('text') else r.content
+                return func(**kwargs)
             return Exception('Error in request.')
         return wrapper
 
-    # @add.exception
-    # @__getdata
-    # @staticmethod
-    # def scrape(**kwargs, text=True) -> str:
-    #     return BeautifulSoup(kwargs.get('response'),'lxml').find_all(kwargs.get('tag'))
+    @add.exception
+    @__getdata
+    @staticmethod
+    def scrape(**kwargs) -> str:
+        return BeautifulSoup(
+            kwargs.get('response'), kwargs.get('type') ### <-- 'xml' or 'lxml'
+        ).find_all(kwargs.get('tag'))
         
-
     @add.exception
     @__getdata
     @staticmethod
