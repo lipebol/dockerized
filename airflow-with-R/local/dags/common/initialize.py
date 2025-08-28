@@ -1,4 +1,5 @@
-from airflow.sdk import Variable
+# from airflow.sdk import Variable # -- version 3 --
+from airflow.models import Variable
 from ast import literal_eval
 from cryptography.fernet import Fernet
 from datetime import datetime
