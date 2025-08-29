@@ -7,12 +7,6 @@ import pyarrow as arrow
 
 class flowconf:
 
-    __schema, __table = 'divvy_bikes', 'files'
-
-    @property
-    def __url(self) -> str:
-        return load.variable('DIVVY_BIKES')
-    
     @staticmethod
     def to_table(data: list) -> object:
         def parser(content: str|tuple) -> dict:
@@ -25,15 +19,20 @@ class flowconf:
             return dict(zip(['filename','last_modified','id','size'], content))
         return arrow.Table.from_pylist(list(map(parser, data)))
 
-    
-    def pull(self):
-        self.__files = flowconf.to_table(
-            httpEx.scrape(url=self.__url,type='xml',tag='Contents')
-        ).join(
-            flowconf.to_table(db.select(self.__schema, self.__table)), 
-            keys='id', join_type='left anti'
+    @staticmethod
+    def pull():
+        __url = load.variable('DIVVY_BIKES')
+        __schema, __table = 'divvy_bikes', 'files'
+        __files = db.select(__schema, __table)
+        __newfiles = flowconf.to_table(
+            httpEx.scrape(url=__url,type='xml',tag='Contents')
         )
-        if self.__files.num_rows:
-            for filename in self.__files.select([0]).to_pydict().get('filename'):
-                httpEx.save(flowpath=load().flow, url=self.__url + filename)
-        return db.adbc(self.__files, self.__schema, self.__table)
+        if len(__files):
+            __newfiles = __newfiles.join(
+                flowconf.to_table(__files), 
+                keys='id', join_type='left anti'
+            )
+        if __newfiles.num_rows:
+            for filename in __newfiles.select([0]).to_pydict().get('filename'):
+                httpEx.save(flowpath=load().flow, url=__url + filename)
+        return db.adbc(__newfiles, __schema, __table)
