@@ -1,12 +1,11 @@
-from common.initialize import add, load
-from pyarrow import csv
+from common.initialize import load
+from pyarrow import csv as arrow
 
 class file:
 
     def __init__(self, files=None) -> None:
         self.__files = files
 
-    @add.exception
     def find(self, filename=None) -> str:
         if self.__files:
             self.__file = "".join(self.__files) if type(
@@ -18,17 +17,15 @@ class file:
             return self.__file
         raise Exception(load.variable('MESSAGE_NOT_DECLARED') % 'files')
     
-    @add.exception
     def find_by_name(self, filename: str) -> str:
         return "".join([item for item in self.__files if filename in item])
 
-    @add.exception
     def load_csv(self, fields: list, types: dict, filename=None, sep=None) -> object:
-        return csv.read_csv(
+        return arrow.read_csv(
             self.find(filename),
-            parse_options=csv.ParseOptions(delimiter=sep if sep else ';'),
-            read_options=csv.ReadOptions(
+            parse_options=arrow.ParseOptions(delimiter=sep if sep else ';'),
+            read_options=arrow.ReadOptions(
                 encoding=load.variable('ENCODE_LATIN'), 
                 column_names=fields, skip_rows=1
-            ), convert_options=csv.ConvertOptions(column_types=types)
+            ), convert_options=arrow.ConvertOptions(column_types=types)
         )
