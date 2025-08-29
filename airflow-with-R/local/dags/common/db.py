@@ -1,4 +1,4 @@
-from common.initialize import add, load
+from common.initialize import load
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 import adbc_driver_postgresql.dbapi
 
@@ -8,12 +8,18 @@ class db:
     def __postgres(self):
         return PostgresHook(load.variable('POSTGRES_CONN'))
     
-    @add.exception
     @staticmethod
     def conn():
         return db().__postgres.get_conn()
     
-    @add.exception
+    @staticmethod
+    def columns(schema: str, table: str):
+        with db().conn().cursor() as __cursor:
+            __cursor.execute(
+                load.variable('SELECT_COMMAND') % (schema, table)
+            )
+            return [column[0] for column in __cursor.description]
+
     @staticmethod
     def select(schema: str, table: str, params=None):
         sql_command = load.variable('SELECT_COMMAND') % (schema, table)
@@ -21,7 +27,6 @@ class db:
             pass
         return db().__postgres.get_records(sql_command)
 
-    @add.exception
     @staticmethod
     def adbc(pyarrowTable: object, schema: str, table: str) -> str:
         __conn = adbc_driver_postgresql.dbapi.connect(db().__postgres.get_uri())
