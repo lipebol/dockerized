@@ -8,8 +8,10 @@ from inspect import currentframe, getmodule
 from json import dump, load
 from glob import glob
 from os import listdir, path, remove
+from pathlib import Path
 from pytz import timezone
 import sys
+from zipfile import ZipFile
 
 
 class load:
@@ -77,8 +79,12 @@ class load:
     def __files(self, type: str):
         if not self.flow:
             raise Exception(self.__flow_not_declared)
-        return glob(load.variable(type) % self.flow)
+        return glob(load.variable(type) % self.flow, recursive=True)
     
+    @property
+    def zip_files(self):
+        return self.__files('ZIP_FILES')
+
     @property
     def csv_files(self):
         return self.__files('CSV_FILES')
@@ -105,6 +111,10 @@ class load:
     @staticmethod
     def crypto(fernet_key: str) -> object:
         return Fernet(load.variable(fernet_key, encode=True))
+
+    @staticmethod
+    def path(path: str):
+        return Path(path)
 
     @staticmethod
     def variable(var: str|bytes, encode=False, decode=False, eval=False) -> str:
@@ -134,6 +144,17 @@ class load:
             if not data:
                 return load(jsonfile)
             dump(data, jsonfile, indent=5)
+
+    @staticmethod
+    def unzip(zip_file: object, suffix=None) -> str:
+        def extract(zip_obj: object, suffix: str, path: str):
+            for file in zip_obj.namelist():
+                if file.endswith(suffix):
+                    yield zip_obj.extract(file, path)           
+        with ZipFile(zip_file, 'r') as zip_obj:
+            if suffix:
+                return list(extract(zip_obj, suffix, zip_file.parent))
+            return zip_obj.extractall(zip_file.parent)
 
     @staticmethod
     def timezone_default() -> str:
