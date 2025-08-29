@@ -17,5 +17,6 @@
   "ENCODE_LATIN": "latin1",
   "CSV_FILES": "%s/datasets/*[.csv,.CSV]",
   "CONTEXT_AIRFLOW_KEYS": "('dag','task','task_instance','exception','ts')",
+  "SELECT_COMMAND": "SELECT * FROM %s.%s",
   "8RAYBGCH38ZY64H": ""
 }
