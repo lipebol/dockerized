@@ -75,9 +75,9 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ./airflow-with-R/local/.old/configurations/airflow.cfg:/opt/user/dockerized/airflow/airflow.cfg
+      - ./airflow-with-R/local/.old/conf/airflow.cfg:/opt/user/dockerized/airflow/airflow.cfg
       # -- version 3 --
-      # - ./airflow-with-R/local/configurations/airflow.cfg:/opt/user/dockerized/airflow/airflow.cfg
+      # - ./airflow-with-R/local/conf/airflow.cfg:/opt/user/dockerized/airflow/airflow.cfg
       #-----------------
       - ./airflow-with-R/local/dags:/opt/user/dockerized/airflow/dags
     working_dir: /opt/user/dockerized/airflow
