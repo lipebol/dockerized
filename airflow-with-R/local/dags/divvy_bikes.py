@@ -5,6 +5,7 @@ from airflow.operators.python import PythonOperator
 from common.initialize import load
 from datetime import datetime
 from flows.divvy_bikes.python.flowconf import flowconf
+from flows.divvy_bikes.python.processing import processing
 
 
 with DAG(
@@ -27,5 +28,10 @@ with DAG(
         python_callable=flowconf.pull
     )
 
+    task_3=PythonOperator(
+        task_id="Processing...",
+        python_callable=processing.unpack
+    )
 
-task_1 >> task_2
+
+task_1 >> task_2 >> task_3
