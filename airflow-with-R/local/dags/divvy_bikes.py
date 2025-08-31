@@ -33,5 +33,10 @@ with DAG(
         python_callable=processing.unpack
     )
 
+    task_4=PythonOperator(
+        task_id="Loading...",
+        python_callable=processing.load
+    )
 
-task_1 >> task_2 >> task_3
+
+task_1 >> task_2 >> task_3 >> task_4
