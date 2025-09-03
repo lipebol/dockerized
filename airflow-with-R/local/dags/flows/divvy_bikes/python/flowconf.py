@@ -4,8 +4,9 @@ from common.httpEx import httpEx
 from xmltodict import parse
 import pyarrow as arrow
 
-
 class flowconf:
+
+    schema = 'divvy_bikes'
 
     @staticmethod
     def to_table(data: list) -> object:
@@ -22,17 +23,20 @@ class flowconf:
     @staticmethod
     def pull():
         __url = load.variable('DIVVY_BIKES')
-        __schema, __table = 'divvy_bikes', 'files'
-        __files = db.select(__schema, __table)
         __newfiles = flowconf.to_table(
             httpEx.scrape(url=__url,type='xml',tag='Contents')
         )
-        if len(__files):
+        if (__files := db.select(flowconf.schema, 'files')):
             __newfiles = __newfiles.join(
                 flowconf.to_table(__files), 
                 keys='id', join_type='left anti'
             )
         if __newfiles.num_rows:
-            for filename in __newfiles.select([0]).to_pydict().get('filename'):
+            if (__files:= load().zip_files(with_path=False)):
+                __newfiles = __newfiles.select([0]).join(
+                    arrow.Table.from_pydict({'filename': arrow.array(__files)}), 
+                    keys='filename', join_type='left anti'
+                )
+            for filename in __newfiles.to_pydict().get('filename'):
                 httpEx.save(flowpath=load().flow, url=__url + filename)
-        return db.adbc(__newfiles, __schema, __table)
+        return db.adbc(__newfiles, flowconf.schema, 'files')
