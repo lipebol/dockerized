@@ -81,10 +81,12 @@ class load:
             raise Exception(self.__flow_not_declared)
         return glob(load.variable(type) % self.flow, recursive=True)
     
-    @property
-    def zip_files(self):
-        return self.__files('ZIP_FILES')
-
+    def zip_files(self, with_path=True):
+        __zip_files = self.__files('ZIP_FILES')
+        if not with_path:
+            return [load.path(zip_file).name for zip_file in __zip_files]
+        return __zip_files
+        
     @property
     def csv_files(self):
         return self.__files('CSV_FILES')
