@@ -11,7 +11,7 @@
   "MESSAGE_FILE_NOT_FOUND": "File Not Found.",
   "HEADERS": "{'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'}",
   "FLOWS": "/opt/user/dockerized/airflow/dags/flows",
-  "DIVVY_BIKES": "https://divvy-tripdata.s3.amazonaws.com",
+  "DIVVY_BIKES": "https://divvy-tripdata.s3.amazonaws.com/",
   "EXCEL_FILES": "%s/datasets/*[.xls,.xlsx]",
   "ENCODE_UTF": "utf8",
   "ENCODE_LATIN": "latin1",
