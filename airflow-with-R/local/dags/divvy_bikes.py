@@ -34,8 +34,8 @@ with DAG(
     )
 
     task_4=PythonOperator(
-        task_id="Loading...",
-        python_callable=processing.load
+        task_id="LoadingTripData2020...",
+        python_callable=processing.tripdata_gte_2020
     )
 
 
