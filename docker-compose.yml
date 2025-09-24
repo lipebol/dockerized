@@ -154,15 +154,11 @@ services:
 networks:
   lipebol-network:
     external: true
-    name: lipebol-network
 
 volumes:
   pgdata:
     external: true
-    name: pgdata
   mongodb-data:
     external: true
-    name: mongodb-data
   xfce-data:
     external: true
-    name: xfce-data
