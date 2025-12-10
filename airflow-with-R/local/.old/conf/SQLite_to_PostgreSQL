@@ -1,7 +1,0 @@
-### Never send your "passwords" in Production ###
-
-### in "/root/airflow/airflow.cfg"
-"executor" and "sql_alchemy_conn"
-
-### in "container command line"
-airflow users create --username snoopy --firstname Snoopy --lastname Buddy --role Admin --email snoopy@buddy.regard --password i_miss_you_friend
