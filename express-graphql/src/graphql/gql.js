@@ -1,15 +1,21 @@
-const router = require(process.env.EXPRESS).Router()
-const { createHandler } = require(process.env.GRAPHQL_HTTP)
-const GraphiQL = require(process.env.GRAPHIQL).default
-const { schemas } = require(process.env.GRAPHQL_SCHEMAS)
-const { resolvers } = require(process.env.GRAPHQL_RESOLVERS)
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
+import { Router } from 'express'
+import { createHandler } from 'graphql-http/lib/use/express'
+import { schemas } from './handlers/schemas.mjs'
+import { resolvers } from './handlers/resolvers.mjs'
 
+const router = Router()
 
-router.all(process.env.SLASH, createHandler({ 
-  schema: schemas, 
-  rootValue: resolvers
-}))
+router.all(
+    process.env.SLASH, createHandler(
+        { schema: schemas, rootValue: resolvers, context: request => request }
+    )
+)
+router.get(
+    process.env.GRAPHQL_TOOL, (request, response) => {
+        response.sendFile(join(dirname(fileURLToPath(import.meta.url)), process.env.GRAPHIQL))
+    }
+)
 
-router.get(process.env.GRAPHIQL_ENDPOINT, GraphiQL({ endpoint: process.env.GRAPHQL_ENDPOINT }))
-
-module.exports = router
+export default router

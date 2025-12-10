@@ -1,26 +1,46 @@
-const { c_ } = require(process.env.CONTROLLER_PATH)
+import { Controllers } from '../../controllers.mjs'
 
-const resolvers = {
-    async book(args, _, context) {
-        args.about = { query: arguments.callee.name, context }
-        return await c_.multi(args)
-    },
-    async nvi(args) {
-        args.query = arguments.callee.name
-        return await c_.multi(args)
-    },
-    async genre(args, _, context) {
-        args.about = { query: arguments.callee.name, context }
-        return await c_.multi(args)
-    },
-    async artist(args, _, context) {
-        args.about = { query: arguments.callee.name, context }
-        return await c_.multi(args)
-    },
-    async track(args) {
-        args.query = arguments.callee.name
-        return await c_.multi(args)
+class Resolvers {
+
+    static create() {
+        return {
+            async spotifyAPI(args, context, info) {
+                return await Controllers.multi(
+                    Resolvers.handler(args, context, info)
+                )
+            },
+            async spotifExArtists(args, context, info) {
+                return await Controllers.multi(
+                    Resolvers.handler(args, context, info)
+                )
+            },
+            async spotifExTracks(args, context, info) {
+                console.log(Resolvers.handler(args, context, info))
+                return await Controllers.multi(
+                    Resolvers.handler(args, context, info)
+                )
+            },
+            async spotifExDaylists(args, context, info) {
+                return await Controllers.multi(
+                    Resolvers.handler(args, context, info)
+                )
+            }
+        }
+    }
+
+    static handler(args, context, info) {
+        return {
+            headers: context.headers,
+            filter: Object.keys(args)[0].toString(),
+            params: Object.values(args)[0],
+            about: {
+                resolver: info.fieldName,
+                type: info.returnType.ofType.name
+                    .replace('Response', ''),
+                fields: info.fieldNodes,
+            }
+        }
     }
 }
 
-module.exports = { resolvers }
+export const resolvers = Resolvers.create()
