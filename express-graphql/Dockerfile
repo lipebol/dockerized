@@ -1,7 +1,23 @@
-FROM node:lts-alpine
+### Never send your "passwords" in Production ###
+FROM node:lts-slim AS base-build
+
+RUN \
+    apt update && apt upgrade -y \
+    && apt install clevis -y \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# === DEV ===
+FROM base-build AS dev
+WORKDIR /home/node/servEx
+
+# === PROD ===
+FROM base-build AS prod
 ENV NODE_ENV=production
-RUN mkdir -p /home/node/webservEx/node_modules && chown -R node:node /home/node/webservEx
-WORKDIR /home/node/webservEx
+RUN \
+    mkdir -p /home/node/express-graphql/node_modules \
+    && chown -R node:node /home/node/express-graphql
+WORKDIR /home/node/express-graphql
 COPY package*.json ./
 RUN npm install
 COPY --chown=node:node . .
