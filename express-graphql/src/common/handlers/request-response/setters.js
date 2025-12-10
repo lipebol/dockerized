@@ -1,103 +1,116 @@
+import { ParamsHandler } from "./params.js"
+import { Externals } from './externals.mjs'
 
-class SetRequestResponse {
+export class SetHandler {
 
-    constructor() { try { this.object = this.init() } catch (err) { console.log(err) } }
-
-
-    init() { return JSON.parse(process.env.OBJECT_EMPTY) }
-
-
-    url(originalUrl) {
+    constructor(request, response) {
         try {
-            return originalUrl
-                .split(process.env.QUESTION)[0]
-                .split(process.env.SLASH).slice(2)
-        } catch (err) { console.log(err) }
-    }
-
-
-    model(model) {
-        try {
-            if (model.name && model.table) {
-                this.object.model = `_${(model.name + model.table).toUpperCase()}`
-            } else { this.object.model = model }
-        } catch (err) { console.log(err) }
-    }
-
-
-    filter(args) {
-        try {
-            if (args) {
-                this.object.filter = args.name && args.column ? /// <--- REST
-                    process.env[`${(args.name + args.column).toUpperCase()}`] :
-                    typeof (args) === process.env.TYPE_STRING ? /// <--- GraphQL
-                        args : Object.keys(args)[0].toString()
+            this.handler = {
+                ...ParamsHandler.check(request),
+                response: response,
             }
         } catch (err) { console.log(err) }
     }
 
+    external() {
+        if (!this.handler.authExternal || this.handler.authExternal === '') {
+            this.handler.error = { name: 'Unauthorized', status_code: 401 }
+        }
+        return this
+    }
 
-    query(query) { /// <--- REST
+    model() {
         try {
-            if (query) {
-                let [param] = Object.keys(query)
-                let [arg] = Object.values(query)
-                if (param && arg) { this.object.params = { [param]: arg } }
-            }
+            this.handler.model = this.handler.name && this.handler.table ?
+                `_${(this.handler.name + this.handler.table).toUpperCase()}` :
+                this.handler.about.resolver
+            return this
         } catch (err) { console.log(err) }
     }
 
-
-    param(args) { /// <--- GraphQL
+    fields() {
         try {
-            if (args) {
-                this.object.params = Object.values(args)[0] === process.env.ASTERISK ? undefined :
-                    { [args.periodo ? 'dates' : 'multi']: Object.values(args)[0] }
-            }
-        } catch (err) { console.log(err) }
-    }
-
-
-    page(pagination) {
-        try {
-            if (pagination !== undefined) {
-                this.object.page = parseInt(pagination) <= 0 ? 1 : parseInt(pagination)
-            }
-        } catch (err) { console.log(err) }
-    }
-
-
-    count() { try { this.object.count = process.env.ASTERISK } catch (err) { console.log(err) } }
-
-
-    fields(context) {
-        try {
-            if (context) {
-                this.object.fields = context.fieldNodes[0].selectionSet.selections.map(
-                    value => value.name.value
+            if (this.handler.about.fields && !this.handler.error) {
+                const unwrap = (content) => {
+                    return (
+                        Array.isArray(content) ? content[0] : content
+                    ).selectionSet?.selections
+                }
+                unwrap(this.handler.about.fields).forEach(
+                    (node) => {
+                        if (
+                            node.typeCondition?.name.value
+                            === this.handler.about.type
+                        ) {
+                            this.handler.fields = unwrap(unwrap(node))
+                                .map(selection => selection.name.value)
+                        }
+                    }
                 )
             }
+            return this
         } catch (err) { console.log(err) }
     }
-
 
     lookup(...args) {
         try {
-            if (args) {
-                this.object.lookup = args.length === 1 ?
-                    args[0] : { path: args[0], populate: args[1] }
+            if (this.handler.lookup) {
+                if (args && !this.handler.error) {
+                    this.handler.lookup = args.length === 1 ?
+                        args[0] : { path: args[0], populate: args[1] }
+                }
+            }
+            return this
+        } catch (err) { console.log(err) }
+    }
+
+    page() {
+        try {
+            if (this.handler.page && !this.handler.error) {
+                this.handler.page = parseInt(this.handler.page) <= 0 ? 1 :
+                    parseInt(this.handler.page)
+                this.handler.offset = (this.handler.page - 1)
+                    * this.handler.limit
+            }
+            return this
+        } catch (err) { console.log(err) }
+    }
+
+    sql() {
+        try {
+            if (!this.handler.error) {
+                this.handler.db = 'sql'
             }
         } catch (err) { console.log(err) }
     }
 
+    nosql() {
+        try {
+            if (!this.handler.error) {
+                this.handler.db = 'nosql'
+                if (this.handler.filter && this.handler.params) {
+                    this.handler.where = (() => {
+                        return this.handler.paramsType === 'multi' ?
+                            { [this.handler.filter]: { '$in': this.handler.params } } :
+                            {
+                                [this.handler.filter]:
+                                {
+                                    '$gte': new Date(this.handler.params.start),
+                                    '$lte': new Date(this.handler.params.end)
+                                }
+                            }
+                    })()
+                }
+            }
+        } catch (err) { console.log(err) }
+    }
 
-    finally() {
-        this.request = this.object
-        this.object = this.init()
-        return this.request
+    build() {
+        try {
+            if (this.handler.authExternal && !this.handler.error) {
+                return Externals.initialize(this.handler)
+            }
+            return this.handler
+        } catch (err) { console.log(err) }
     }
 }
-
-const set = new SetRequestResponse()
-
-module.exports = { set }

@@ -1,81 +1,86 @@
-const { set } = require(process.env.SETTERS_PATH)
+import { SetHandler } from './set.mjs'
 
-class GetRequestResponse {
+export class GetHandler {
 
-    requestREST(request) {
+    static create(request, response) {
+        try {
+            const handler = new SetHandler(request, response)
+            return request.route ?
+                GetHandler.#REST(handler) :
+                GetHandler.#GraphQL(handler, request.about.resolver)
+        } catch (err) { console.log(err) }
+    }
+
+    static response(handler) {
+        try {
+            if (handler.response) {
+                this.status = parseInt(
+                    process.env[Object.keys(data).toString().toUpperCase()]
+                )
+                return response.status(this.status ? this.status : 200).json(data)
+            } else {
+                // __typename: --> essential when you deal with unions/interfaces
+                if (handler.error) {
+                    return {
+                        __typename: handler.error.name, error: handler.error.name,
+                        message: process.env[handler.error.name],
+                        status_code: handler.error.status_code
+                    }
+                }
+                return handler.info ? {
+                    __typename: 'Info', total: handler.data.count,
+                    pages: handler.data.countpages
+                } : {
+                    __typename: handler.about.type,
+                    data: Array.isArray(handler.data) ? handler.data : [handler.data]
+                }
+            }
+        } catch (err) { console.log(err) }
+    }
+
+    static #REST(handler) {
         try {
             let [version, name, table, column] = set.url(request.originalUrl)
-            set.model({ name, table })
+            sethandler.model({ name, table })
             if (request.query && column) {
-                set.filter({ name, column })
-                set.query(request.query)
-                if (request.query.page) { set.page(request.query.page) } else { set.count() }
+                sethandler.filter({ name, column })
+                sethandler.query(request.query)
+                if (request.query.page) {
+                    sethandler.page(request.query.page)
+                } else { sethandler.count() }
             }
-            return set.finally()
+            return sethandler.finally()
         } catch (err) { console.log(err) }
     }
 
-    requestGraphQL(request) { try { return new GetRequestGraphQL(request).who() } catch (err) { console.log(err) } }
-
-    responseREST(response, content) {
+    static async #GraphQL(handler, resolvername) {
         try {
-            this.status = parseInt(process.env[Object.keys(content).toString().toUpperCase()])
-            return response.status(this.status ? this.status : 200).json(content)
+            switch (resolvername) {
+                case 'spotifExGenres':
+                    handler.model()
+                        .fields()
+                        .nosql()
+                    break
+                case 'spotifExArtists':
+                    handler.model()
+                        .page()
+                        .lookup('genres')
+                        .nosql()
+                    break
+                case 'spotifExTracks':
+                    handler.model()
+                        .lookup('artist', { path: 'genres' })
+                        .nosql()
+                    break
+                case 'spotifExDaylists':
+                    handler.model()
+                        .lookup('track', { path: 'artist', populate: { path: 'genres' } })
+                        .nosql()
+                    break
+                default:
+                    handler.external().fields()
+            }
+            return await handler.build()
         } catch (err) { console.log(err) }
     }
 }
-
-
-class GetRequestGraphQL {
-
-    constructor(request) {
-        this.request = request
-        this.resolver = this.request.query || this.request.about.query
-    }
-
-    who() {
-        try {
-            switch (this.resolver) {
-                case 'book':
-                    set.model('M_BOOKS')
-                    set.filter(this.request.name.length > 3 ? this.request : 'abbrev')
-                    set.param(this.request)
-                    set.fields(this.request.about.context)
-                    break
-                case 'nvi':
-                    set.model('M_NVI_VERSION')
-                    // set.filter(this.request)
-                    // set.param(this.request)
-                    // set.page(this.request.pagina)
-                    set.lookup(['book', 'chapter', 'verse'])
-                    break
-                case 'genre': /// <-- com 'argumentos' e 'paginação'
-                    set.model('M_GENRES')
-                    set.filter(this.request)
-                    set.param(this.request)
-                    set.page(this.request.page)
-                    set.fields(this.request.about.context)
-                    break
-                case 'artist': /// <-- com 'argumentos' e 'paginação'
-                    set.model('M_ARTISTS')
-                    set.filter(this.request)
-                    set.param(this.request)
-                    set.page(this.request.page)
-                    set.fields(this.request.about.context)
-                    break
-                case 'track': /// <-- com 'argumentos' e 'paginação'
-                    set.model('M_TRACKS')
-                    set.filter(this.request)
-                    set.param(this.request)
-                    set.page(this.request.pagina)
-                    set.lookup(['artist', 'genres'])
-                    break
-            }
-            return set.finally()
-        } catch (err) { console.log(err) }
-    }
-}
-
-const get = new GetRequestResponse()
-
-module.exports = { get }
