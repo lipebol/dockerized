@@ -1,12 +1,11 @@
 ### Never send your "passwords" in Production ###
 
 x-base: &common
-  env_file: .env
   build:
     dockerfile: Dockerfile
-  restart: always
+  restart: unless-stopped
   networks:
-    - lipebol-network
+    - podman
   deploy:
     resources:
       limits:
@@ -24,7 +23,21 @@ x-base: &common
     - PUID=1000
     - PGID=1000
 
-services:  
+services:
+  express-graphql-dev:
+    <<: *common
+    build:
+      context: ./express-graphql
+      target: dev
+    image: lipebol/express-graphql-dev:v1
+    container_name: express-graphql-dev
+    tty: true
+    stdin_open: true
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/home/node/servEx
+  
   nginx:
     <<: *common
     build:
@@ -39,5 +52,5 @@ services:
       - ./nginx-reverse-proxy/public:/usr/share/nginx/html
 
 networks:
-  lipebol-network:
+  podman:
     external: true
