@@ -9,7 +9,7 @@ RUN \
 
 # === DEV ===
 FROM base-build AS dev
-WORKDIR /home/node/servEx
+WORKDIR /home/node/express-graphql
 
 # === PROD ===
 FROM base-build AS prod
