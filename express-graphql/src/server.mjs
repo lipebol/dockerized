@@ -17,7 +17,7 @@ Server.use((req, res) => {
             )
         )
     ) {
-        return res.status(404).json({ error: process.env.NOT_FOUND })
+        return res.status(404).json({ error: process.env.NotFound })
     }
     return res.status(404).redirect(process.env._404_)
 })
