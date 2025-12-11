@@ -77,7 +77,6 @@ export const schemas = buildSchema(`
         images: [_ImageField_]
         total_tracks: Int
         copyrights: [_CopyrightField_]
-        external_ids: String
         label: String
     }
 
@@ -92,7 +91,7 @@ export const schemas = buildSchema(`
         explicit: Boolean
         track_number: Int
         disc_number: Int
-        external_ids: String
+        isrc: String
     }
 
     type spotifExTracks {

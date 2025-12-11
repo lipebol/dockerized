@@ -8,13 +8,14 @@ import { resolvers } from './handlers/resolvers.mjs'
 const router = Router()
 
 router.all(
-    process.env.SLASH, createHandler(
+    "/", createHandler(
         { schema: schemas, rootValue: resolvers, context: request => request }
     )
 )
-router.get(
-    process.env.GRAPHQL_TOOL, (request, response) => {
-        response.sendFile(join(dirname(fileURLToPath(import.meta.url)), process.env.GRAPHIQL))
+router.get("/tool", (_, response) => {
+        response.sendFile(
+            join(dirname(fileURLToPath(import.meta.url)), "./graphiql.html")
+        )
     }
 )
 
