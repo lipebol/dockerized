@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import * as models from './models.js'
+import * as models from './models.mjs'
 
 export class Service {
 

@@ -1,4 +1,4 @@
-import { ParamsHandler } from "./params.js"
+import { ParamsHandler } from "./params.mjs"
 import { Externals } from './externals.mjs'
 
 export class SetHandler {

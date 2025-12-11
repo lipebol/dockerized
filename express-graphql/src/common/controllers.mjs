@@ -1,5 +1,5 @@
-import { Service } from './service.js'
-import { GetHandler } from './handlers/request-response/get.js'
+import { Service } from './service.mjs'
+import { GetHandler } from './handlers/request-response/get.mjs'
 
 export class Controllers {
 
