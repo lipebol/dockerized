@@ -29,20 +29,20 @@ services:
     build:
       context: ./express-graphql
       target: dev
-    image: lipebol/express-graphql-dev:v1
+    image: lipebol/express-graphql-dev
     container_name: express-graphql-dev
     tty: true
     stdin_open: true
     ports:
       - 3000:3000
     volumes:
-      - .:/home/node/servEx
+      - ./express-graphql:/home/node/express-graphql
   
   nginx:
     <<: *common
     build:
       context: ./nginx-reverse-proxy
-    image: lipebol/nginx:v1
+    image: lipebol/nginx
     container_name: nginx-reverse-proxy
     ports:
       - 80:80
