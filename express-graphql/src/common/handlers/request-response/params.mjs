@@ -76,7 +76,7 @@ export class ParamsHandler {
                     break
             }
             if (handler.params.includes('invalid')) {
-                handler.error = { name: 'BadRequest', status_code: 400 }
+                handler.data = { error: { name: 'BadRequest', status_code: 400 } }
             }
         }
         return handler
