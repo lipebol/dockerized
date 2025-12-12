@@ -55,7 +55,7 @@ export const schemas = buildSchema(`
     }
 
     type spotifExArtistsFields {
-        id: String
+        artistid: String
         name: String
         profile: String
         followers: Int
@@ -68,7 +68,7 @@ export const schemas = buildSchema(`
     }
 
     type spotifExAlbumsFields {
-        id: String
+        albumid: String
         name: String
         album_type: String
         release_date: String
@@ -78,6 +78,10 @@ export const schemas = buildSchema(`
         total_tracks: Int
         copyrights: [_CopyrightField_]
         label: String
+    }
+
+    type spotifExAlbums {
+        data: [spotifExAlbumsFields]
     }
 
     type spotifExTracksFields {
@@ -109,13 +113,34 @@ export const schemas = buildSchema(`
     }
 
     union spotifExArtistsResponse = spotifExArtists | Info | NotFound | BadRequest | InternalError | Unauthorized
+    union spotifExAlbumsResponse = spotifExAlbums | Info | NotFound | BadRequest | InternalError | Unauthorized
     union spotifExTracksResponse = spotifExTracks | Info | NotFound | BadRequest | InternalError | Unauthorized
     union spotifExDaylistsResponse = spotifExDaylists | Info | NotFound | BadRequest | InternalError | Unauthorized
 
     type Query {
-        spotifyAPI(id: String): spotifExTracksResponse!
-        spotifExArtists(name: String, page: Int, info: Boolean, lookup: Boolean): spotifExArtistsResponse!
-        spotifExTracks(title: String, page: Int, info: Boolean, lookup: Boolean): spotifExTracksResponse!
-        spotifExDaylists(date: String, page: Int, info: Boolean, lookup: Boolean): spotifExDaylistsResponse!
+        spotifyAPI(trackid: String): spotifExTracksResponse!
+
+
+        spotifExArtists(
+            artistid: String, name: String, page: Int, 
+            info: Boolean, lookup: Boolean
+        ): spotifExArtistsResponse!
+
+
+        spotifExAlbums(
+            albumid: String, name: String, page: Int, 
+            info: Boolean, lookup: Boolean
+        ): spotifExAlbumsResponse!
+
+
+        spotifExTracks(
+            trackid: String, name: String, page: Int, 
+            info: Boolean, lookup: Boolean
+        ): spotifExTracksResponse!
+
+        
+        spotifExDaylists(
+            date: String, page: Int, info: Boolean, lookup: Boolean
+        ): spotifExDaylistsResponse!
     }
 `)
