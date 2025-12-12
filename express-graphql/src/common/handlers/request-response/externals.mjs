@@ -26,13 +26,13 @@ export class Externals {
         let track = await Externals.get(
             graphql, query(handler.about.type, handler.filter, handler.params)
         )
-        
+
 
         if (!track.data[handler.about.type]?.data) {
 
             track = await Externals.get(spotify, { token: handler.authExternal })
 
-            const data = track.status_code ?
+            let data = track.status_code ?
                 { error: track } : {
                     url: track.external_urls?.spotify, name: track.name, trackid: track.id,
                     duration_ms: track.duration_ms, disc_number: track.disc_number,
