@@ -68,7 +68,7 @@ export class ParamsHandler {
                             //     )
                             //     break
                             default:
-                                return ['id', 'name', 'date']
+                                return ['trackid', 'albumid', 'artistid', 'name', 'date']
                                     .includes(handler.filter) ?
                                     ParamsHandler.sanitize(handler) : 'invalid'
                         }
@@ -90,7 +90,7 @@ export class ParamsHandler {
             !handler.headers.authexternal ? undefined :
                 cryptHandler(handler.headers.authexternal),
             handler.params.includes('*') ? true : false,
-            handler.lookup === undefined ?
+            handler.lookup === undefined ? /// in "Query"
                 true : handler.lookup,
             handler.info ? 0 : 100
         ]
