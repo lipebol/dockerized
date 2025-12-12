@@ -25,8 +25,8 @@ export class Controllers {
 
     static async multi(request, response) {
         const handler = await GetHandler.create(request, response)
-        if (handler.params && !handler.error) {
-            if (!handler.data) {
+        if (handler.params && !handler.data?.error) {
+            if (handler.db) {
                 handler.data = await Service[handler.db](handler)
             }
             return GetHandler.response(handler)
@@ -37,7 +37,7 @@ export class Controllers {
 
     static async noparams(handler, response) {
         try {
-            if (!handler.error) {
+            if (!handler.data?.error) {
                 handler = handler.model && handler.db ?
                     handler : await GetHandler.create(handler, response)
                 handler.data = await Service[handler.db](handler)
