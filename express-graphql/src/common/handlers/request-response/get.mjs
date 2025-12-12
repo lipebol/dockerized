@@ -56,15 +56,15 @@ export class GetHandler {
     static async #GraphQL(handler, resolvername) {
         try {
             switch (resolvername) {
-                case 'spotifExGenres':
-                    handler.model()
-                        .fields()
-                        .nosql()
-                    break
                 case 'spotifExArtists':
                     handler.model()
                         .page()
                         .lookup('genres')
+                        .nosql()
+                    break
+                case 'spotifExAlbums':
+                    handler.model()
+                        .fields()
                         .nosql()
                     break
                 case 'spotifExTracks':
