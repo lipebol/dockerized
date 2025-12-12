@@ -20,11 +20,11 @@ export class GetHandler {
                 return response.status(this.status ? this.status : 200).json(data)
             } else {
                 // __typename: --> essential when you deal with unions/interfaces
-                if (handler.error) {
+                if (handler.data?.error) {
                     return {
-                        __typename: handler.error.name, error: handler.error.name,
-                        message: process.env[handler.error.name],
-                        status_code: handler.error.status_code
+                        __typename: handler.data.error.name, error: handler.data.error.name,
+                        message: process.env[handler.data.error.name],
+                        status_code: handler.data.error.status_code
                     }
                 }
                 return handler.info ? {
