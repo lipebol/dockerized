@@ -14,8 +14,12 @@ class Resolvers {
                     Resolvers.handler(args, context, info)
                 )
             },
+            async spotifExAlbums(args, context, info) {
+                return await Controllers.multi(
+                    Resolvers.handler(args, context, info)
+                )
+            },
             async spotifExTracks(args, context, info) {
-                console.log(Resolvers.handler(args, context, info))
                 return await Controllers.multi(
                     Resolvers.handler(args, context, info)
                 )
@@ -33,6 +37,7 @@ class Resolvers {
             headers: context.headers,
             filter: Object.keys(args)[0].toString(),
             params: Object.values(args)[0],
+            page: args.page, info: args.info, lookup: args.lookup,
             about: {
                 resolver: info.fieldName,
                 type: info.returnType.ofType.name
