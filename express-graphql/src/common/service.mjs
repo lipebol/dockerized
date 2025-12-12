@@ -44,18 +44,12 @@ export class Service {
                 .select(handler.fields).skip(handler.offset)
                 .limit(handler.limit).populate(handler.lookup).exec()
 
-            if (data.length === 0) {
-                handler.error = { name: 'NotFound', status_code: 404 }
-            }
-
-            if (!handler.error && handler.info) {
-                return {
-                    count: data.length, countpages: Math.ceil(
-                        parseFloat(data.length) / 100
-                    )
+            return data.length === 0 ?
+                { error: { name: 'NotFound', status_code: 404 } } :
+                !handler.info ? data : {
+                    count: data.length,
+                    countpages: Math.ceil(parseFloat(data.length) / 100)
                 }
-            }
-            return data
         } catch (err) { console.log(err) }
     }
 }
