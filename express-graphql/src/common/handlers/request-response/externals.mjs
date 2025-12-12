@@ -26,12 +26,13 @@ export class Externals {
         let track = await Externals.get(
             graphql, query(handler.about.type, handler.filter, handler.params)
         )
+        
 
         if (!track.data[handler.about.type]?.data) {
 
             track = await Externals.get(spotify, { token: handler.authExternal })
 
-            handler.data = track.status_code ?
+            const data = track.status_code ?
                 { error: track } : {
                     url: track.external_urls?.spotify, name: track.name, trackid: track.id,
                     duration_ms: track.duration_ms, disc_number: track.disc_number,
@@ -39,7 +40,8 @@ export class Externals {
                     explicit: track.explicit, isrc: track.external_ids?.isrc,
                 }
 
-            if (!handler.data?.error && handler.fields.includes('album')) {
+
+            if (!data.error && handler.fields.includes('album')) {
                 let album = await Externals.get(
                     graphql, query('spotifExAlbums', 'albumid', track.album?.id)
                 )
@@ -50,9 +52,9 @@ export class Externals {
                     )
 
                     if (album.status_code) {
-                        handler.data = { error: album }
+                        data = { error: album }
                     } else {
-                        handler.data.album = {
+                        data.album = {
                             albumid: album.id, name: album.name, label: album.label,
                             release_date: album.release_date, images: album.images,
                             available_markets: album.available_markets,
@@ -66,7 +68,7 @@ export class Externals {
             }
 
 
-            if (!handler.data?.error && handler.fields.includes('artists')) {
+            if (!data.error && handler.fields.includes('artists')) {
                 let ids = track.artists?.map(artist => artist.id)
                 let artists = await Externals.get(
                     graphql, query('spotifExArtists', 'artistid', ids.join('|'))
@@ -102,12 +104,12 @@ export class Externals {
                             }
                         )
                     )
-                    if (artists.status_code) { handler.data = { error: artists } }
-                    else { handler.data.artists = artists }
+                    if (artists.status_code) { data = { error: artists } }
+                    else { data.artists = artists }
                 }
             }
+            return data
         }
-        return await handler
     }
 
 
