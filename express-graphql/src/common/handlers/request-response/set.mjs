@@ -14,7 +14,7 @@ export class SetHandler {
 
     external() {
         if (!this.handler.authExternal || this.handler.authExternal === '') {
-            this.handler.error = { name: 'Unauthorized', status_code: 401 }
+            this.handler.data = { error: { name: 'Unauthorized', status_code: 401 } }
         }
         return this
     }
@@ -30,7 +30,7 @@ export class SetHandler {
 
     fields() {
         try {
-            if (this.handler.about.fields && !this.handler.error) {
+            if (this.handler.about?.fields && !this.handler.data?.error) {
                 const unwrap = (content) => {
                     return (
                         Array.isArray(content) ? content[0] : content
@@ -55,7 +55,7 @@ export class SetHandler {
     lookup(...args) {
         try {
             if (this.handler.lookup) {
-                if (args && !this.handler.error) {
+                if (args && !this.handler.data?.error) {
                     this.handler.lookup = args.length === 1 ?
                         args[0] : { path: args[0], populate: args[1] }
                 }
@@ -66,7 +66,7 @@ export class SetHandler {
 
     page() {
         try {
-            if (this.handler.page && !this.handler.error) {
+            if (this.handler.page && !this.handler.data?.error) {
                 this.handler.page = parseInt(this.handler.page) <= 0 ? 1 :
                     parseInt(this.handler.page)
                 this.handler.offset = (this.handler.page - 1)
@@ -78,7 +78,7 @@ export class SetHandler {
 
     sql() {
         try {
-            if (!this.handler.error) {
+            if (!this.handler.data?.error) {
                 this.handler.db = 'sql'
             }
         } catch (err) { console.log(err) }
@@ -86,7 +86,7 @@ export class SetHandler {
 
     nosql() {
         try {
-            if (!this.handler.error) {
+            if (!this.handler.data?.error) {
                 this.handler.db = 'nosql'
                 if (this.handler.filter && this.handler.params) {
                     this.handler.where = (() => {
@@ -107,8 +107,8 @@ export class SetHandler {
 
     build() {
         try {
-            if (this.handler.authExternal && !this.handler.error) {
-                return Externals.initialize(this.handler)
+            if (this.handler.authExternal && !this.handler.data?.error) {
+                this.handler.data = Externals.initialize(this.handler)
             }
             return this.handler
         } catch (err) { console.log(err) }
