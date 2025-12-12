@@ -105,10 +105,10 @@ export class SetHandler {
         } catch (err) { console.log(err) }
     }
 
-    build() {
+    async build() {
         try {
             if (this.handler.authExternal && !this.handler.data?.error) {
-                this.handler.data = Externals.initialize(this.handler)
+                this.handler.data = await Externals.initialize(this.handler)
             }
             return this.handler
         } catch (err) { console.log(err) }
